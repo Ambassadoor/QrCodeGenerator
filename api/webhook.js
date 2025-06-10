@@ -86,7 +86,7 @@ export default async function handler(req, res) {
   const form = new FormData();
   form.append('file', bufferData, {
     filename: `${concatId}.png`,
-    content_type: 'image/png',
+    contentType: 'image/png',
   });
 
   const sendRes = await limiter.schedule(() =>
