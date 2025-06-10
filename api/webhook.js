@@ -74,7 +74,7 @@ export default async function handler(req, res) {
   console.log(bufferData.length, 'bytes of QR code data generated');
 
   const { id: uploadId } = await limiter.schedule(() =>
-    notion.files.create({
+    notion.fileUploads.create({
         mode: 'single_part',
         filename: `${concatId}.png`,
         content_type: 'image/png',
