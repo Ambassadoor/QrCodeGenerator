@@ -50,20 +50,28 @@ export default async function handler(req, res) {
   }
 
   if (payload.type !== 'page.created' || payload.data.parent.id !== process.env.NOTION_DATABASE_ID) {
+    console.log('Ignoring webhook event:', payload.type);
     return res.status(200).end();
   }
   const pageId = payload.entity.id;
+  console.log('Processing page ID:', pageId);
 
   const page = await limiter.schedule(() =>
     notion.pages.retrieve({ page_id: pageId })
   );
+  console.log('Retrieved page:', page);
+
   const uuid = page.properties['UUID'].formula.string;
   const id = page.properties['ID'].unique_id;
   const concatId = `${id.prefix}-${id.number}`;
   const qrPayload = JSON.stringify({ id: concatId, uuid: uuid });
 
+  console.log('QR Payload:', qrPayload);
+
   const dataUrl = await QRCode.toDataURL(qrPayload, { type: 'image/png' });
   const bufferData = Buffer.from(dataUrl.split(',')[1], 'base64');
+
+  console.log(bufferData.length, 'bytes of QR code data generated');
 
   const { id: uploadId } = await limiter.schedule(() =>
     notion.files.create({
