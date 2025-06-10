@@ -81,12 +81,15 @@ export default async function handler(req, res) {
     })
   );
 
+  console.log('Upload ID:', uploadId);
+
   const form = new FormData();
   form.append('file', bufferData, {
     filename: `${concatId}.png`,
-    contentType: 'image/png',
+    content_type: 'image/png',
   });
-  await limiter.schedule(() =>
+
+  const sendRes = await limiter.schedule(() =>
     fetch(`https://api.notion.com/v1/file_uploads/${uploadId}/send`, {
         method: 'POST',
         headers: {
@@ -96,6 +99,14 @@ export default async function handler(req, res) {
         },
         body: form,
     })).then(r => r.ok || Promise.reject(`send failed ${r.status}`));
+
+    const bodyText = await sendRes.text();
+    if (!sendRes.ok) {
+        console.error('Failed to send file upload:', bodyText);
+        return res.status(500).send('Failed to send file upload');
+    }
+
+
 
   await limiter.schedule(() =>
     notion.pages.update({
