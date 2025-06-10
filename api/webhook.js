@@ -49,7 +49,7 @@ export default async function handler(req, res) {
         return res.status(401).end();
   }
 
-  if (payload.type !== 'page.created' || payload.database_id !== process.env.NOTION_DATABASE_ID) {
+  if (payload.type !== 'page.created' || payload.data.parent.id !== process.env.NOTION_DATABASE_ID) {
     return res.status(200).end();
   }
   const pageId = payload.entity.id;
