@@ -41,17 +41,16 @@ export default async function handler(req, res) {
         .digest('hex');
 
     const expected = `sha256=${hmac}`;
-    
+
     if (signature !== expected) {
         console.error('Invalid signature', {signature, expected});
         return res.status(401).end();
   }
 
-  const evt = payload.event;
-  if (evt.type !== 'page.created' || evt.database_id !== process.env.NOTION_DATABASE_ID) {
+  if (payload.type !== 'page.created' || evt.database_id !== process.env.NOTION_DATABASE_ID) {
     return res.status(200).end();
   }
-  const pageId = evt.page_id;
+  const pageId = payload.entity.id;
 
   const page = await limiter.schedule(() =>
     notion.pages.retrieve({ page_id: pageId })
