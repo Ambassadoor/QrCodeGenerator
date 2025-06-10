@@ -30,6 +30,8 @@ export default async function handler(req, res) {
     const rawBody = (await buffer(req)).toString('utf-8');
     const payload = JSON.parse(rawBody);
 
+    console.log('Received webhook payload:', payload);
+
     if (payload.verification_token) {
         return res.status(200).send(payload.verification_token);
     }
