@@ -98,7 +98,7 @@ export default async function handler(req, res) {
           ...form.getHeaders(),
         },
         body: form,
-    })).then(r => r.ok || Promise.reject(`send failed ${r.status}`));
+    }));
 
     const bodyText = await sendRes.text();
     if (!sendRes.ok) {
