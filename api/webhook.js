@@ -34,10 +34,14 @@ export default async function handler(req, res) {
         return res.status(200).send(payload.verification_token);
     }
     const signature = req.headers['x-notion-signature'];
-    const expected = crypto
+
+    const hmac = crypto
         .createHmac('sha256', process.env.NOTION_VERIFICATION_TOKEN)
         .update(rawBody)
-        .digest('base64');
+        .digest('hex');
+
+    const expected = `sha256=${hmac}`;
+    
     if (signature !== expected) {
         console.error('Invalid signature', {signature, expected});
         return res.status(401).end();
