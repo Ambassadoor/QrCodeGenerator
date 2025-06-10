@@ -11,6 +11,7 @@
   "description": "",
   "dependencies": {
     "@vercel/node": "^5.2.1",
+    "crypto": "^1.0.1",
     "micro": "^10.0.1"
   }
 }
