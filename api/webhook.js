@@ -73,12 +73,22 @@ export default async function handler(req, res) {
 
   console.log(bufferData.length, 'bytes of QR code data generated');
 
-  const { id: uploadId } = await limiter.schedule(() =>
-    notion.fileUploads.create({
-        filename: `${concatId}.png`,
-        content_type: 'image/png',
-    })
-  );
+const uploadRes = await limiter.schedule(() =>
+  fetch('https://api.notion.com/v1/file_uploads', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${process.env.NOTION_TOKEN}`,
+      'Notion-Version': '2022-06-28',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      mode: 'single_part',
+      filename: `${concatId}.png`,
+      content_type: 'image/png',
+    }),
+  })
+);
+const { id: uploadId } = await uploadRes.json();
 
   console.log('Upload ID:', uploadId);
 
