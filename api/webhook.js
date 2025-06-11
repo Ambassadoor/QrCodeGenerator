@@ -4,6 +4,7 @@ import { Client } from '@notionhq/client';
 import Bottleneck from 'bottleneck';
 import QRCode from 'qrcode';
 import FormData from 'form-data';
+import fetch from 'node-fetch';
 
 
 
