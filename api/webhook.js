@@ -75,7 +75,6 @@ export default async function handler(req, res) {
 
   const { id: uploadId } = await limiter.schedule(() =>
     notion.fileUploads.create({
-        mode: 'single_part',
         filename: `${concatId}.png`,
         content_type: 'image/png',
     })
@@ -88,6 +87,7 @@ export default async function handler(req, res) {
     filename: `${concatId}.png`,
     content_type: 'image/png',
   });
+
 
   const sendRes = await limiter.schedule(() =>
     fetch(`https://api.notion.com/v1/file_uploads/${uploadId}/send`, {
@@ -103,7 +103,7 @@ export default async function handler(req, res) {
     const sendJson = await sendRes.json();
 
     if (!sendRes.ok) {
-        console.error('Failed to send file upload:', bodyText);
+        console.error('Failed to send file upload:', sendJson);
         return res.status(500).send('Failed to send file upload');
     }
 
