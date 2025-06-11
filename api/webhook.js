@@ -4,7 +4,6 @@ import { Client } from '@notionhq/client';
 import Bottleneck from 'bottleneck';
 import QRCode from 'qrcode';
 import FormData from 'form-data';
-import fetch from 'node-fetch';
 
 
 
@@ -23,6 +22,7 @@ const limiter = new Bottleneck({
 });
 
 export default async function handler(req, res) {
+    const fetch = (await import('node-fetch')).default;
   try {
     if (req.method !== 'POST') {
       return res.status(405).json({ error: 'Method Not Allowed' });
