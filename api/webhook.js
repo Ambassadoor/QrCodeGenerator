@@ -79,10 +79,9 @@ export default async function handler(req, res) {
       notion.pages.retrieve({ page_id: pageId })
     );
 
-    const uuid = page.properties['UUID'].formula.string;
     const id = page.properties['ID'].unique_id;
     const concatId = `${id.prefix}-${id.number}`;
-    const qrPayload = JSON.stringify({ id: concatId, uuid });
+    const qrPayload = JSON.stringify({ id: concatId, pageId });
 
     // Generate QR
     const dataUrl = await QRCode.toDataURL(qrPayload, { type: 'image/png' });
